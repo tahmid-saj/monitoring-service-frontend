@@ -10,11 +10,15 @@ const Monitoring = () => {
   const { monitoringWebsites } = useContext(MonitoringContext)
 
   return (
-    monitoringWebsites && monitoringWebsites.length !== 0 &&  
     <Fragment>
       <Header/>
       <AddWebsite/>
-      <MonitoringWebsites/>
+      {
+        monitoringWebsites && monitoringWebsites.length !== 0 && 
+        <Fragment>
+          <MonitoringWebsites/>
+        </Fragment>
+      }
     </Fragment>
   )
 }

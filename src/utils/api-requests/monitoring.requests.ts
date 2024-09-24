@@ -21,10 +21,11 @@ export const addWebsite = async (websiteURL: string) => {
       URL: websiteURL
     }
 
+    console.log(`${process.env.REACT_APP_MONITORING_SERVICE_ROOT_URL}${process.env.REACT_APP_MONITORING_SERVICE_ADD_WEBSITE_PATH}`)
     const res = await fetch(`${process.env.REACT_APP_MONITORING_SERVICE_ROOT_URL}${process.env.REACT_APP_MONITORING_SERVICE_ADD_WEBSITE_PATH}`, {
       method: "POST",
       headers: {
-        "Content-Type": "application-json"
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(reqBody)
     })

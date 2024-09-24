@@ -13,3 +13,11 @@ export const WebsiteStatusContainer = styled.div`
   border-radius: 0%.5;
   box-shadow: 0.5px 0.5px 0.5px 0.75px rgb(150, 150, 150);
 `
+
+export const StatusTextDown = styled.h3`
+  color: crimson;
+`
+
+export const StatusTextUp = styled.h3`
+  color: green;
+`

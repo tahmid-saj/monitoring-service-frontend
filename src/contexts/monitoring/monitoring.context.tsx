@@ -1,6 +1,13 @@
 import React, { FC, useState, createContext, useEffect } from "react";
 import { MonitoringContextType, MonitoringProviderProps, MonitoringWebsite } from "./monitoring.types";
 import { addWebsite, checkAllPings, removeWebsite } from "../../utils/api-requests/monitoring.requests";
+import { useQuery } from "../../utils/hooks/monitoring.hooks";
+
+interface UseQueryResult<T> {
+  data: T | null;
+  loading: boolean;
+  error: string | null;
+}
 
 const addMonitoringWebsiteHelper = async (monitoringWebsites: MonitoringWebsite[], websiteURL: string) => {
   const websiteMetadata = await addWebsite(websiteURL)
@@ -8,9 +15,9 @@ const addMonitoringWebsiteHelper = async (monitoringWebsites: MonitoringWebsite[
   return [
     ...monitoringWebsites,
     {
-      siteID: websiteMetadata.site_id,
+      siteID: websiteMetadata.id,
       url: websiteURL,
-      checkedAt: websiteMetadata.checked_at,
+      checkedAt: websiteMetadata.created_at,
       up: websiteMetadata.up
     }
   ]
@@ -26,7 +33,7 @@ const removeMonitoringWebsiteHelper = async (monitoringWebsites: MonitoringWebsi
   await removeWebsite(websiteID.siteID)
 
   return monitoringWebsites.filter((website) => {
-    return website.url === websiteURL
+    return website.url !== websiteURL
   })
 }
 
@@ -42,24 +49,40 @@ export const MonitoringContext = createContext<MonitoringContextType>({
 export const MonitoringProvider: FC<MonitoringProviderProps> = ({ children }) => {
   const [monitoringWebsites, setMonitoringWebsites] = useState<MonitoringWebsite[]>([]);
 
+  const { data: websiteStatusData, loading, error } = useQuery(checkAllPings, 120000);
+
+  // useEffect(() => {
+  //   const updateMonitoringWebsites = async () => {
+  //     try {
+  //       // Fetch the monitoring websites status
+  //       const monitoringWebsitesStatus = await checkAllPings();
+
+  //       // Ensure that monitoringWebsitesStatus is an array before calling map
+
+  //       const updatedMonitoringWebsites = monitoringWebsitesStatus.map((website: any) => {
+  //         return {
+  //           siteID: website.site_id,
+  //           url: website.url,
+  //           checkedAt: website.checked_at,
+  //           up: website.up
+  //         };
+  //       });
+
+  //       setMonitoringWebsites(updatedMonitoringWebsites);
+  //       console.log(updatedMonitoringWebsites)
+  //     } catch (error) {
+  //       console.error("Error fetching monitoring websites status:", error);
+  //     }
+  //   };
+
+  //   updateMonitoringWebsites();
+  // }, []);
+
   useEffect(() => {
-    const updateMonitoringWebsites = async () => {
-      const monitoringWebsitesStatus = await checkAllPings()
-
-      const updatedMonitoringWebsites = monitoringWebsitesStatus.map((website: any) => {
-        return {
-          siteID: website.site_id,
-          url: website.url,
-          checkedAt: website.checked_at,
-          up: website.up
-        }
-      })
-
-      setMonitoringWebsites(updatedMonitoringWebsites)
+    if (!loading && !error && websiteStatusData && websiteStatusData.length !== 0) {
+      setMonitoringWebsites(websiteStatusData)
     }
-
-    updateMonitoringWebsites()
-  }, [])
+  }, [websiteStatusData])
 
   const addMonitoringWebsite = async (websiteURL: string) => {
     const updatedMonitoringWebsites = await addMonitoringWebsiteHelper(monitoringWebsites, websiteURL)
