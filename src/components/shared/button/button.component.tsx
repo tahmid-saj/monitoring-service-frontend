@@ -1,6 +1,6 @@
-import "./button.styles.jsx";
-import { BaseButton, GoogleSignInButton, InvertedButton } from "./button.styles.jsx";
-import { BUTTON_TYPE_CLASSES } from "../../../utils/constants/shared.constants.js";
+import "./button.styles";
+import { BaseButton, GoogleSignInButton, InvertedButton } from "./button.styles";
+import { BUTTON_TYPE_CLASSES } from "../../../utils/constants/shared.constants";
 import { ReactNode } from "react";
 
 const getButton = (buttonType = BUTTON_TYPE_CLASSES.base) => {

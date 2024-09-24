@@ -1,4 +1,4 @@
-import "./form-input.styles.jsx";
+import "./form-input.styles";
 import { FormInputLabel, Input, Group } from "./form-input.styles";
 import React, { FC } from 'react';
 
